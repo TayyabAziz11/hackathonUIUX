@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { CiAlarmOn } from "react-icons/ci";
 import { FaChartArea } from "react-icons/fa";
 import { FaGreaterThan } from "react-icons/fa6";
@@ -57,7 +58,7 @@ const FeaturedPosts = () => {
         {posts.map((post) => (
           <div key={post.id} className="w-full max-w-[348px] mx-auto h-auto bg-white shadow-md rounded-lg overflow-hidden">
             <div className="relative">
-              <img src={post.img} alt={post.title} className="w-full h-[300px] object-cover" />
+              <Image src={post.img} alt={post.title} width={1000} height={100} className="w-full h-[300px] object-cover" />
              <div className="mt-8 flex flex-wrap gap-4 sm:gap-10 ml-3 font-normal leading-4">
                 <p className="text-[#8EC2F2]">{post.link}</p>
                 <p className="text-[#737373]">{post.link2}</p>
