@@ -7,7 +7,7 @@ import brand3 from "/public/brand3.png";
 import brand4 from "/public/brand4.png";
 import brand5 from "/public/brand5.png";
 import brand6 from "/public/brand6.png";
-import workgirl from "/public/workgirl.jpg";
+import workgirl from "/public/Workgirl.jpg";
 
 import { FaFacebook } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
