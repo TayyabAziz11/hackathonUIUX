@@ -9,7 +9,7 @@ import { FaTwitter } from "react-icons/fa";
 const Header = () => {
   return (
     // Header Main div
-    <div className='w-full h-[58px] bg-[#23856D] flex items-center '>
+    <div className='w-full h-[58px] bg-[#23856D] flex items-center hidden lg:block'>
 
         <div className='w-full h-[46px] mt-1 flex justify-around '>
              

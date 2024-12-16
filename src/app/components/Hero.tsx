@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 const Hero = () => {
   return (
@@ -14,9 +15,11 @@ const Hero = () => {
           <p className='text-lg mt-7 tracking-[0.2px]'>
             We know how large objects will act, <br /> but things on a small scale.
           </p>
-          <button className='mt-8 rounded-md px-6 py-3 bg-[#2DC071] font-semibold text-xl'>
+          <Link href="/Shop">
+            <button className='mt-8 rounded-md px-6 py-3 bg-[#2DC071] font-semibold text-xl'>
             SHOP NOW
-          </button>
+            </button>
+          </Link>
         </div>
       </div>
     </div>

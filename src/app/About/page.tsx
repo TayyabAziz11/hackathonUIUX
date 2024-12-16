@@ -12,6 +12,8 @@ import workgirl from "/public/Workgirl.jpg";
 import { FaFacebook } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
+import Footer from "../components/Footer";
+import Navbar2 from "../components/Navbar2";
 
 const teamMembers = [
   {
@@ -34,38 +36,7 @@ const teamMembers = [
 const About = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Navigation */}
-      <nav className="flex items-center justify-between py-4 sm:py-6">
-        <div className="font-bold text-lg sm:text-xl">Bandage</div>
-        <div className="hidden md:flex items-center space-x-4 sm:space-x-8">
-          <a href="/" className="text-gray-600 text-sm sm:text-base">Home</a>
-          <a href="#" className="text-gray-600 text-sm sm:text-base">Product</a>
-          <a href="#" className="text-gray-600 text-sm sm:text-base">Pricing</a>
-          <a href="/Contact" className="text-gray-600 text-sm sm:text-base">Contact</a>
-        </div>
-        <div className="flex items-center space-x-2 sm:space-x-4">
-          <a href="#" className="text-blue-500 text-sm sm:text-base">Login</a>
-          <a
-            href="#"
-            className="bg-blue-500 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-md text-sm sm:text-base flex items-center"
-          >
-            Become a member
-            <svg
-              className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </a>
-        </div>
-      </nav>
+         <Navbar2 />
 
       {/* Hero Section */}
       <div className='w-full h-auto sm:h-[600px] py-8 sm:py-16 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 items-center bg-cover bg-center' style={{backgroundImage: `url("/shopingGirl.png")`}}>
@@ -233,6 +204,7 @@ const About = () => {
           />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
