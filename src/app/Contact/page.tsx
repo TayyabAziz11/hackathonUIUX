@@ -126,7 +126,7 @@ const Page = () => {
                 WE Can't WAIT TO MEET YOU
               </h5>
               <h1 className="font-bold text-4xl md:text-[58px] leading-tight text-[#252B42] mt-4">
-                Let's Talk
+                Let&apos;s Talk
               </h1>
               <button className="w-full max-w-[186px] h-[52px] bg-[#23A6F0] rounded-md text-white flex justify-center items-center mx-auto mt-6">
                 Try it free now
