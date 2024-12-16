@@ -123,7 +123,7 @@ const Page = () => {
           <div className="w-full max-w-[607px] flex justify-center items-center">
             <div className="w-full max-w-[272px] text-center">
               <h5 className="text-[#252B42] font-bold text-base">
-                WE Can't WAIT TO MEET YOU
+                WE Can&apos;t WAIT TO MEET YOU
               </h5>
               <h1 className="font-bold text-4xl md:text-[58px] leading-tight text-[#252B42] mt-4">
                 Let&apos;s Talk
