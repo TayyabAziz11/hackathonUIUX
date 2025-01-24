@@ -36,6 +36,14 @@ export const product = defineType({
             of: [{ type: "string" }]
         },
         {
+            
+                name: "categories",
+                title: "Categories",
+                type: "array",
+                of: [{ type: "reference", to: {type: "categories"}}] 
+        
+        },
+        {
             name:"dicountPercentage",
             type:"number",
             title:"Discount Percentage",
