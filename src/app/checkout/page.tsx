@@ -1,25 +1,33 @@
-"use client";
+"use client"
 
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
-import CheckoutForm from "../components/CheckoutForm";
+import { Elements } from "@stripe/react-stripe-js"
+import { loadStripe } from "@stripe/stripe-js"
+import { useSearchParams } from "next/navigation"
+import { useEffect, useState, Suspense } from "react"
+import CheckoutForm from "../components/CheckoutForm"
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+// Dynamically import this page to disable SSR
+import dynamic from 'next/dynamic'
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+
+// Disable SSR for this component
+const CheckoutPageWithNoSSR = dynamic(() => Promise.resolve(CheckoutPage), {
+  ssr: false,
+})
 
 export default function CheckoutPage() {
-  const searchParams = useSearchParams();
-  const amountParam = searchParams.get("amount");
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams()
+  const amountParam = searchParams.get("amount")
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const amount = Number.parseFloat(amountParam || "0");
+  const amount = Number.parseFloat(amountParam || "0")
 
   useEffect(() => {
     if (!amount || isNaN(amount) || amount <= 0) {
-      setError("Invalid payment amount. Please return to cart.");
-      return;
+      setError("Invalid payment amount. Please return to cart.")
+      return
     }
 
     async function createPaymentIntent() {
@@ -28,29 +36,29 @@ export default function CheckoutPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount: Math.round(amount * 100) }),
-        });
+        })
 
         if (!response.ok) {
-          throw new Error("Failed to create payment intent");
+          throw new Error("Failed to create payment intent")
         }
 
-        const { clientSecret } = await response.json();
-        setClientSecret(clientSecret);
+        const { clientSecret } = await response.json()
+        setClientSecret(clientSecret)
       } catch (error) {
-        console.error("Payment intent creation failed:", error);
-        setError("Failed to initialize payment. Please try again.");
+        console.error("Payment intent creation failed:", error)
+        setError("Failed to initialize payment. Please try again.")
       }
     }
 
-    createPaymentIntent();
-  }, [amount]);
+    createPaymentIntent()
+  }, [amount])
 
   if (error) {
-    return <div className="text-center py-8 text-red-500">{error}</div>;
+    return <div className="text-center py-8 text-red-500">{error}</div>
   }
 
   if (!clientSecret) {
-    return <div className="text-center py-8">Loading payment gateway...</div>;
+    return <div className="text-center py-8">Loading payment gateway...</div>
   }
 
   return (
@@ -68,6 +76,7 @@ export default function CheckoutPage() {
               </span>
             </div>
 
+            {/* Add Suspense here for Stripe Elements */}
             <Suspense fallback={<div>Loading Stripe...</div>}>
               <Elements
                 stripe={stripePromise}
@@ -77,11 +86,11 @@ export default function CheckoutPage() {
                 }}
               >
                 <CheckoutForm
-                  onPaymentSuccess={function (): void {
-                    throw new Error("Function not implemented.");
+                  onPaymentSuccess={() => {
+                    // Function implementation
                   }}
-                  onClose={function (): void {
-                    throw new Error("Function not implemented.");
+                  onClose={() => {
+                    // Function implementation
                   }}
                 />
               </Elements>
@@ -90,5 +99,5 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
