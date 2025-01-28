@@ -2,8 +2,7 @@ export const revalidate = 0;
 import Footer from "@/app/components/Footer";
 import Navbar from "@/app/components/Navbar";
 import { client } from "@/sanity/lib/client";
-import Image from "next/image";
-import Link from "next/link";
+import Image from "next/image";;
 import AddToCart from "@/app/components/AddToCart";
 
 interface CategoryProduct {
@@ -90,6 +89,7 @@ export default async function CategoryPage({
               key={product._id}
               className="bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 relative"
             >
+
               {product.isNew && (
                 <div className="absolute top-4 left-4 z-10">
                   <span className="text-xs uppercase tracking-wider font-bold bg-yellow-500 text-white px-3 py-1 rounded-full shadow-md animate-pulse">
@@ -97,6 +97,7 @@ export default async function CategoryPage({
                   </span>
                 </div>
               )}
+
               <div className="relative h-[250px] w-full">
                 <Image
                   src={product.imageUrl || "/placeholder.png"}
@@ -107,13 +108,14 @@ export default async function CategoryPage({
               </div>
 
               <div className="p-4 flex flex-col justify-between h-[calc(100%-250px)]">
+
                 <div>
                   <h2 className="text-xl font-bold text-gray-800 mb-2 transition-colors">
                     {product.name}
                   </h2>
                   <p className="text-gray-600 mb-2 text-sm line-clamp-2">
-    {product.description}
-  </p>
+                   {product.description}
+                  </p>
 
                   <div className="flex flex-wrap gap-4 items-center">
                     <p className="text-3xl font-bold text-green-700">
@@ -138,13 +140,16 @@ export default async function CategoryPage({
                         </span>
                       ))}
                     </div>
+
                   )}
                 </div>
 
                 <div className="mt-auto">
                   <AddToCart product={product as any} />
                 </div>
+
               </div>
+              
             </div>
           ))}
         </div>

@@ -3,7 +3,13 @@
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useClerk } from "@clerk/clerk-react"; // Import Clerk's hook
+import { useClerk } from "@clerk/clerk-react";
+import { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "./CheckoutForm";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface CartModalProps {
   isOpen: boolean;
@@ -12,13 +18,14 @@ interface CartModalProps {
 }
 
 export default function CartModal({ isOpen, onClose, isFullPage = false }: CartModalProps) {
-  const { cartItems, removeFromCart, updateQuantity, totalItems } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, totalItems, clearCart } = useCart();
   const router = useRouter();
-  const { user, openSignIn } = useClerk(); // Clerk hook for user authentication
+  const { user, openSignIn } = useClerk();
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
 
   if (!isOpen && !isFullPage) return null;
 
-  // Calculate total price with discount
   const calculateTotalPriceWithDiscount = () => {
     return cartItems.reduce((total, item) => {
       const discount = (item.price * (item.dicountPercentage || 0)) / 100;
@@ -31,11 +38,39 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
 
   const handleViewCart = () => {
     if (!user) {
-      openSignIn(); // Show login modal if user is not logged in
+      openSignIn();
     } else {
-      router.push("/cart"); // Navigate to the cart page if user is logged in
-      onClose(); // Close the modal
+      router.push("/cart");
+      onClose();
     }
+  };
+
+  const handleCheckout = async () => {
+    if (!user) {
+      openSignIn();
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: Math.round(totalPriceWithDiscount * 100) }),
+      });
+
+      const data = await response.json();
+      setClientSecret(data.clientSecret);
+      setIsCheckoutOpen(true);
+    } catch (error) {
+      console.error("Error creating payment intent:", error);
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    clearCart();
+    setIsCheckoutOpen(false);
+    onClose();
+    router.push("/payment-success");
   };
 
   return (
@@ -44,14 +79,19 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
         isFullPage ? "" : "fixed inset-0 bg-black bg-opacity-50 z-50"
       } flex items-center justify-center`}
     >
+
       <div
         className={`bg-white rounded-lg shadow-lg ${
           isFullPage ? "w-full" : "max-w-2xl w-full mx-4 max-h-[80vh]"
         }`}
       >
+
         <div className="p-6">
+
           <div className="flex justify-between items-center mb-4">
+
             <h2 className="text-2xl font-bold">Shopping Cart</h2>
+
             {!isFullPage && (
               <button
                 onClick={onClose}
@@ -60,6 +100,7 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
                 ✕
               </button>
             )}
+
           </div>
 
           {cartItems.length === 0 ? (
@@ -67,6 +108,7 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
           ) : (
             <>
               <div className="space-y-4 max-h-[50vh] overflow-y-auto">
+
                 {cartItems.map((item) => {
                   const discount = (item.price * (item.dicountPercentage || 0)) / 100;
                   const discountedPrice = item.price - discount;
@@ -80,9 +122,13 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
                           fill
                           className="object-cover rounded"
                         />
+
                       </div>
+
                       <div className="flex-grow">
+
                         <h3 className="font-semibold">{item.title}</h3>
+
                         {item.dicountPercentage && item.dicountPercentage > 0 ? (
                           <>
                             <p className="text-gray-500 line-through">
@@ -92,22 +138,29 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
                               ${discountedPrice.toFixed(2)}
                             </p>
                           </>
+
                         ) : (
                           <p className="text-green-600">
                             ${item.price.toFixed(2)}
                           </p>
+
                         )}
                         <div className="flex items-center gap-2 mt-2">
+
                           <div className="flex items-center border rounded">
+
                             <button
                               onClick={() =>
                                 updateQuantity(item._id, Math.max(1, item.quantity - 1))
                               }
                               className="px-2 py-1 border-r hover:bg-gray-100"
                             >
+
                               -
                             </button>
+
                             <span className="px-3 py-1">{item.quantity}</span>
+
                             <button
                               onClick={() => updateQuantity(item._id, item.quantity + 1)}
                               className="px-2 py-1 border-l hover:bg-gray-100"
@@ -134,16 +187,23 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
               </div>
 
               <div className="mt-6 border-t pt-4">
+
                 <div className="flex justify-between items-center text-lg mb-2">
+
                   <span>Total Items:</span>
                   <span>{totalItems}</span>
+
                 </div>
+
                 <div className="flex justify-between items-center text-xl font-bold mb-4">
+
                   <span>Total Price:</span>
                   <span className="text-green-600">
                     ${totalPriceWithDiscount.toFixed(2)}
                   </span>
+
                 </div>
+
                 <div className="flex gap-4">
                   {!isFullPage && (
                     <button
@@ -152,8 +212,12 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
                     >
                       {user ? "View Cart" : "Log in to View Cart"}
                     </button>
+                    
                   )}
-                  <button className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors">
+                  <button 
+                    onClick={handleCheckout}
+                    className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors"
+                  >
                     Checkout
                   </button>
                 </div>
@@ -161,6 +225,17 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
             </>
           )}
         </div>
+
+        {isCheckoutOpen && clientSecret && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg max-w-md w-full">
+              <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+              <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <CheckoutForm onPaymentSuccess={handlePaymentSuccess} onClose={() => setIsCheckoutOpen(false)} />
+              </Elements>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

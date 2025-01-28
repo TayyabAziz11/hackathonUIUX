@@ -1,11 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import type { Card } from "@/sanity/lib/interface"
 import CartModal from "./CardModel"
 import { useCart } from "@/context/CartContext"
-import { useClerk } from '@clerk/clerk-react'; // Import Clerk's hook
+import { useClerk } from '@clerk/clerk-react'; 
 
 interface AddToCartProps {
   product: Card & {
@@ -23,7 +22,6 @@ export default function AddToCart({ product }: AddToCartProps) {
 
   const handleAddToCart = () => {
     if (!user) {
-      // If the user is not logged in, open Clerk's login flow
       openSignIn();
       return;
     }
@@ -38,10 +36,10 @@ export default function AddToCart({ product }: AddToCartProps) {
       name: product.name,
       description: product.description,
       tags: product.tags || [],
-      rating: 0,  // Default value if not available
+      rating: 0,  
       isNew: product.isNew || false,
       dicountPercentage: product.dicountPercentage || 0,
-      category: '', // You might need to add this
+      category: '', 
     }
 
     addToCart(cartProduct)
@@ -50,23 +48,31 @@ export default function AddToCart({ product }: AddToCartProps) {
 
   return (
     <div className="mt-6 space-y-4">
+
       <div className="flex items-center gap-4">
+
         <label className="text-sm text-gray-600">Quantity:</label>
+
         <div className="flex items-center border rounded-md">
+
           <button
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
             className="px-4 py-2 border-r hover:bg-gray-100 transition-colors"
           >
             -
           </button>
+
           <span className="px-6 py-2">{quantity}</span>
+
           <button
             onClick={() => setQuantity(quantity + 1)}
             className="px-4 py-2 border-l hover:bg-gray-100 transition-colors"
           >
             +
           </button>
+
         </div>
+        
       </div>
 
       <button
