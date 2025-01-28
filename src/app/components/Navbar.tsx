@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
   const [searchNotification, setSearchNotification] = useState<string | null>(null)
-  const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false)  // Mobile dropdown state
+  const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false) 
   const searchRef = useRef<HTMLDivElement>(null)
   const shopRef = useRef<HTMLDivElement>(null)
   const navbarRef = useRef<HTMLDivElement>(null)
@@ -108,10 +108,14 @@ const Navbar: React.FC = () => {
 
   return (
     <div className="sticky top-0 z-50 bg-white shadow-md" ref={navbarRef}>
+
       <nav className="w-full">
+
         {/* Main Navbar Container */}
+
         <div className="w-full h-16 flex items-center justify-between px-4 md:px-8">
           {/* Logo */}
+
           <div className="flex items-center">
             <Link href="/">
               <Image
@@ -126,16 +130,19 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center justify-between w-full">
+
             {/* Desktop Menu Links */}
             <ul className="flex items-center gap-6 text-gray-700">
               <Link href="/" className="hover:text-blue-500">
                 Home
               </Link>
+
               <div className="relative group" ref={shopRef}>
                 <button className="flex items-center hover:text-blue-500 group">
                   <Link href="/Shop">Shop</Link>
                   <RiArrowDropDownLine className="text-2xl transition-transform group-hover:rotate-180" />
                 </button>
+
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                   {categories.map((category) => (
                     <Link key={category.label} href={category.href} className="block py-2 px-4 hover:bg-gray-100">
@@ -143,6 +150,7 @@ const Navbar: React.FC = () => {
                     </Link>
                   ))}
                 </div>
+
               </div>
               <Link href="/About" className="hover:text-blue-500">
                 About
@@ -154,6 +162,7 @@ const Navbar: React.FC = () => {
                 Contact
               </Link>
             </ul>
+
 
             {/* Desktop Right Side Icons */}
             <div className="flex items-center gap-6">
@@ -200,9 +209,11 @@ const Navbar: React.FC = () => {
                           placeholder="Search products..."
                           className="w-full p-2 border rounded"
                         />
+
                         <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2">
                           <CiSearch />
                         </button>
+
                         {searchQuery.trim() !== "" && searchSuggestions.length > 0 && (
                           <ul className="absolute w-full bg-white border mt-1 rounded-b-lg shadow-lg">
                             {searchSuggestions.map((suggestion, index) => (
@@ -271,8 +282,10 @@ const Navbar: React.FC = () => {
                   }}
                 />
                 <span className="hidden md:inline">Hi, {user?.firstName}</span>
+
               </div>
             ) : (
+
               <div className="flex items-center gap-2 text-blue-500">
                 
                 <SignInButton mode="modal">
@@ -333,6 +346,7 @@ const Navbar: React.FC = () => {
               <Link href="/" className="block py-2 border-b" onClick={() => setIsMenuOpen(false)}>
                 Home
               </Link>
+
               {/* Mobile Shop Dropdown */}
               <div>
                 <button
@@ -342,6 +356,7 @@ const Navbar: React.FC = () => {
                    <Link href="/Shop">Shop</Link>
                   <RiArrowDropDownLine className={`text-xl ${isShopDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
+                
                 {isShopDropdownOpen && (
                   <div className="mt-2 space-y-2">
                     {categories.map((category) => (
