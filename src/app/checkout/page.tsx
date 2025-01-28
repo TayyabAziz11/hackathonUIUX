@@ -6,17 +6,17 @@ import { useSearchParams } from "next/navigation"
 import { useEffect, useState, Suspense } from "react"
 import CheckoutForm from "../components/CheckoutForm"
 
-// Dynamically import this page to disable SSR
-import dynamic from 'next/dynamic'
-
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
-// Disable SSR for this component
-const CheckoutPageWithNoSSR = dynamic(() => Promise.resolve(CheckoutPage), {
-  ssr: false,
-})
-
 export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-8">Loading checkout...</div>}>
+      <CheckoutContent />
+    </Suspense>
+  )
+}
+
+function CheckoutContent() {
   const searchParams = useSearchParams()
   const amountParam = searchParams.get("amount")
   const [clientSecret, setClientSecret] = useState<string | null>(null)
@@ -76,25 +76,22 @@ export default function CheckoutPage() {
               </span>
             </div>
 
-            {/* Add Suspense here for Stripe Elements */}
-            <Suspense fallback={<div>Loading Stripe...</div>}>
-              <Elements
-                stripe={stripePromise}
-                options={{
-                  clientSecret,
-                  appearance: { theme: "stripe" },
+            <Elements
+              stripe={stripePromise}
+              options={{
+                clientSecret,
+                appearance: { theme: "stripe" },
+              }}
+            >
+              <CheckoutForm
+                onPaymentSuccess={() => {
+                  // Function implementation
                 }}
-              >
-                <CheckoutForm
-                  onPaymentSuccess={() => {
-                    // Function implementation
-                  }}
-                  onClose={() => {
-                    // Function implementation
-                  }}
-                />
-              </Elements>
-            </Suspense>
+                onClose={() => {
+                  // Function implementation
+                }}
+              />
+            </Elements>
           </div>
         </div>
       </div>
