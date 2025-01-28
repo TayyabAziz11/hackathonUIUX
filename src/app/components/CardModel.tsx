@@ -3,6 +3,7 @@
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useClerk } from "@clerk/clerk-react"; // Import Clerk's hook
 
 interface CartModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface CartModalProps {
 export default function CartModal({ isOpen, onClose, isFullPage = false }: CartModalProps) {
   const { cartItems, removeFromCart, updateQuantity, totalItems } = useCart();
   const router = useRouter();
+  const { user, openSignIn } = useClerk(); // Clerk hook for user authentication
 
   if (!isOpen && !isFullPage) return null;
 
@@ -28,8 +30,12 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
   const totalPriceWithDiscount = calculateTotalPriceWithDiscount();
 
   const handleViewCart = () => {
-    router.push("/cart");
-    onClose();
+    if (!user) {
+      openSignIn(); // Show login modal if user is not logged in
+    } else {
+      router.push("/cart"); // Navigate to the cart page if user is logged in
+      onClose(); // Close the modal
+    }
   };
 
   return (
@@ -66,10 +72,7 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
                   const discountedPrice = item.price - discount;
 
                   return (
-                    <div
-                      key={item._id}
-                      className="flex gap-4 border-b pb-4"
-                    >
+                    <div key={item._id} className="flex gap-4 border-b pb-4">
                       <div className="relative w-20 h-20">
                         <Image
                           src={item.image_url || "/placeholder.svg"}
@@ -98,10 +101,7 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
                           <div className="flex items-center border rounded">
                             <button
                               onClick={() =>
-                                updateQuantity(
-                                  item._id,
-                                  Math.max(1, item.quantity - 1)
-                                )
+                                updateQuantity(item._id, Math.max(1, item.quantity - 1))
                               }
                               className="px-2 py-1 border-r hover:bg-gray-100"
                             >
@@ -109,9 +109,7 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
                             </button>
                             <span className="px-3 py-1">{item.quantity}</span>
                             <button
-                              onClick={() =>
-                                updateQuantity(item._id, item.quantity + 1)
-                              }
+                              onClick={() => updateQuantity(item._id, item.quantity + 1)}
                               className="px-2 py-1 border-l hover:bg-gray-100"
                             >
                               +
@@ -152,7 +150,7 @@ export default function CartModal({ isOpen, onClose, isFullPage = false }: CartM
                       onClick={handleViewCart}
                       className="flex-1 bg-gray-100 text-gray-800 py-2 rounded hover:bg-gray-200 transition-colors"
                     >
-                      View Cart
+                      {user ? "View Cart" : "Log in to View Cart"}
                     </button>
                   )}
                   <button className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors">

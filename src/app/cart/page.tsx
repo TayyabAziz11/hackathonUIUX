@@ -4,9 +4,19 @@ import { useCart } from "@/context/CartContext";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Image from "next/image";
+import { useClerk } from '@clerk/clerk-react'; // Import Clerk's hook
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, totalItems } = useCart();
+  
+  // Access Clerk's hook
+  const { user, openSignIn } = useClerk();
+
+  // Check if the user is logged in before rendering the cart
+  if (!user) {
+    openSignIn();  // Open the Clerk login modal if the user is not logged in
+    return null;  // Optionally, return null or a loading state while waiting for authentication
+  }
 
   // Calculate total price with discounts applied
   const calculateTotalPrice = () => {

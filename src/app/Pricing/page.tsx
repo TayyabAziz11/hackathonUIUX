@@ -55,7 +55,7 @@ const page = () => {
 
           <div className='w-full mt-10 px-4 sm:px-6'>
               <div className='grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[985px] mx-auto'>
-                  <div className='bg-[#FFFFFF] rounded-[10px] p-6 sm:p-10 text-center flex flex-col gap-7 items-center'>
+                  <div className='bg-[#f6f2f2] rounded-[10px] p-6 sm:p-10 text-center flex flex-col gap-7 items-center'>
                         <h1 className='font-semibold text-[24px] leading-8 text-[#252B42]'>FREE</h1>
                         <p className='max-w-[160px] font-semibold text-[16px] text-[#737373] leading-6'>Organize across all apps by hand</p>
                         <div className='flex items-start gap-2'>
@@ -87,7 +87,7 @@ const page = () => {
                         </div>
                   </div>
 
-                  <div className='bg-[#FFFFFF] rounded-[10px] p-6 sm:p-10 text-center flex flex-col gap-7 items-center'>
+                  <div className='bg-[#f6f2f2] rounded-[10px] p-6 sm:p-10 text-center flex flex-col gap-7 items-center'>
                         <h1 className='font-semibold text-[24px] leading-8 text-[#252B42]'>PREMIUM</h1>
                         <p className='max-w-[160px] font-semibold text-[16px] text-[#737373] leading-6'>Organize across all apps by hand</p>
                         <div className='flex items-start gap-2'>

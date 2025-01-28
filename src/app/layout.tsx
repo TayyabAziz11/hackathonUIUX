@@ -3,8 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { SanityLive } from "@/sanity/lib/live";
-
-
+import { ClientProviders } from "./components/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,18 +18,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-       <html lang="en">
-            <body className={inter.className}>
-
-                   <main>
-                        <CartProvider>
-                            {children}  
-                         </CartProvider>
-                     </main>
-
-                     <SanityLive />
-
-              </body>
-         </html>
+    <html lang="en">
+      <body className={inter.className}>
+        <ClientProviders>
+          <main>
+            <CartProvider>
+              {children}
+            </CartProvider>
+          </main>
+          <SanityLive />
+        </ClientProviders>
+      </body>
+    </html>
   );
 }

@@ -5,6 +5,7 @@ import Image from "next/image"
 import type { Card } from "@/sanity/lib/interface"
 import CartModal from "./CardModel"
 import { useCart } from "@/context/CartContext"
+import { useClerk } from '@clerk/clerk-react'; // Import Clerk's hook
 
 interface AddToCartProps {
   product: Card & {
@@ -17,7 +18,16 @@ export default function AddToCart({ product }: AddToCartProps) {
   const [quantity, setQuantity] = useState(1)
   const [isCartOpen, setIsCartOpen] = useState(false)
 
+  // Access Clerk's hook
+  const { user, openSignIn } = useClerk()
+
   const handleAddToCart = () => {
+    if (!user) {
+      // If the user is not logged in, open Clerk's login flow
+      openSignIn();
+      return;
+    }
+
     // Transform CategoryProduct to Card
     const cartProduct: Card = {
       ...product,
@@ -41,7 +51,7 @@ export default function AddToCart({ product }: AddToCartProps) {
   return (
     <div className="mt-6 space-y-4">
       <div className="flex items-center gap-4">
-      <label className="text-sm text-gray-600">Quantity:</label>
+        <label className="text-sm text-gray-600">Quantity:</label>
         <div className="flex items-center border rounded-md">
           <button
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -57,7 +67,6 @@ export default function AddToCart({ product }: AddToCartProps) {
             +
           </button>
         </div>
-        {/*  */}
       </div>
 
       <button

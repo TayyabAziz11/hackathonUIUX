@@ -6,12 +6,12 @@ import Image from "next/image"
 import Link from "next/link"
 import { CiSearch } from "react-icons/ci"
 import { MdOutlineShoppingCart, MdErrorOutline } from "react-icons/md"
-import { CiHeart } from "react-icons/ci"
+import { CiHeart, CiUser } from "react-icons/ci"
 import { HiOutlineMenuAlt3, HiX } from "react-icons/hi"
 import { RiArrowDropDownLine } from "react-icons/ri"
 import Logo from "/public/navbar-brand.png"
-import Account from "/public/account.png"
 import { useCart } from "@/context/CartContext"
+import { useUser, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -19,11 +19,13 @@ const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
   const [searchNotification, setSearchNotification] = useState<string | null>(null)
+  const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false)  // Mobile dropdown state
   const searchRef = useRef<HTMLDivElement>(null)
   const shopRef = useRef<HTMLDivElement>(null)
   const navbarRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const { totalItems } = useCart()
+  const { isSignedIn, user } = useUser()
 
   const categories = [
     {
@@ -58,25 +60,6 @@ const Navbar: React.FC = () => {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
-
-  // useEffect(() => {
-  //   let lastScrollY = window.scrollY
-
-  //   const handleScroll = () => {
-  //     const currentScrollY = window.scrollY
-
-  //     if (currentScrollY > lastScrollY) {
-  //       setIsMenuOpen(false)
-  //       setIsSearchOpen(false)
-  //       //setIsShopOpen(false)
-  //     }
-
-  //     lastScrollY = currentScrollY
-  //   }
-
-  //   window.addEventListener("scroll", handleScroll, { passive: true })
-  //   return () => window.removeEventListener("scroll", handleScroll)
-  // }, [])
 
   useEffect(() => {
     if (searchNotification) {
@@ -175,17 +158,33 @@ const Navbar: React.FC = () => {
             {/* Desktop Right Side Icons */}
             <div className="flex items-center gap-6">
               {/* Account */}
-              <div className="flex items-center gap-2 text-blue-500">
-                <Image src={Account || "/placeholder.svg"} alt="Account" width={24} height={24} className="w-6 h-6" />
-                <button>Login</button>
-              </div>
+              {isSignedIn ? (
+                <div className="flex items-center gap-2 text-blue-500">
+                  <UserButton
+                    afterSignOutUrl="/"
+                    appearance={{
+                      elements: {
+                        avatarBox: "w-8 h-8",
+                      },
+                    }}
+                  />
+                  <span className="hidden md:inline">Hi, {user?.firstName}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  
+                  <SignInButton mode="modal">
+                    <button className="cursor-pointer flex items-center"><CiUser className="w-6 h-10" />Login</button>
+                  </SignInButton>
+                </div>
+              )}
 
               {/* Desktop Icons */}
-              <div className="flex items-center gap-4 text-xl">
+              <div className="flex items-center gap-4 text-xl ">
                 {/* Search */}
                 <div className="relative" ref={searchRef}>
                   <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="hover:text-blue-500">
-                    <CiSearch />
+                    <CiSearch className="w-6 h-10"/>
                   </button>
 
                   {isSearchOpen && (
@@ -227,7 +226,7 @@ const Navbar: React.FC = () => {
 
                 {/* Cart */}
                 <Link href="/cart" className="relative hover:text-blue-500">
-                  <MdOutlineShoppingCart />
+                  <MdOutlineShoppingCart className="w-6 h-10"/>
                   {totalItems > 0 && (
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
                       {totalItems}
@@ -237,7 +236,7 @@ const Navbar: React.FC = () => {
 
                 {/* Wishlist */}
                 <Link href="/wishlist" className="hover:text-blue-500">
-                  <CiHeart />
+                  <CiHeart className="w-6 h-10"/>
                 </Link>
               </div>
             </div>
@@ -259,6 +258,28 @@ const Navbar: React.FC = () => {
                 </span>
               )}
             </Link>
+
+            {/* Mobile Account (Login Icon) */}
+            {isSignedIn ? (
+              <div className="flex items-center gap-2 text-blue-500">
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8",
+                    },
+                  }}
+                />
+                <span className="hidden md:inline">Hi, {user?.firstName}</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-blue-500">
+                
+                <SignInButton mode="modal">
+                  <button className="cursor-pointer"><CiUser className="w-6 h-10 font-bold" /></button>
+                </SignInButton>
+              </div>
+            )}
 
             {/* Mobile Menu Toggle */}
             <button onClick={toggleMobileMenu} className="text-3xl text-gray-700">
@@ -301,24 +322,40 @@ const Navbar: React.FC = () => {
                   ))}
                 </ul>
               )}
-            </form>{" "}
+            </form>
           </div>
         )}
 
         {/* Mobile Menu Dropdown */}
         {isMenuOpen && (
-          <div className="md:hidden fixed top-16 left-0 right-0  bg-white z-50 overflow-y-auto">
+          <div className="md:hidden fixed top-16 left-0 right-0 bg-white z-50 overflow-y-auto">
             <div className="p-4 space-y-4">
               <Link href="/" className="block py-2 border-b" onClick={() => setIsMenuOpen(false)}>
                 Home
               </Link>
+              {/* Mobile Shop Dropdown */}
               <div>
                 <button
+                  onClick={() => setIsShopDropdownOpen(!isShopDropdownOpen)}
                   className="flex items-center justify-between w-full py-2 border-b"
-                  //onClick={() => setIsShopOpen(!isShopOpen)}
                 >
-                  <Link href="/Shop">Shop</Link>
+                   <Link href="/Shop">Shop</Link>
+                  <RiArrowDropDownLine className={`text-xl ${isShopDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
+                {isShopDropdownOpen && (
+                  <div className="mt-2 space-y-2">
+                    {categories.map((category) => (
+                      <Link
+                        key={category.label}
+                        href={category.href}
+                        className="block py-2 px-4 hover:bg-gray-100"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {category.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
               <Link href="/About" className="block py-2 border-b" onClick={() => setIsMenuOpen(false)}>
                 About
@@ -332,10 +369,6 @@ const Navbar: React.FC = () => {
 
               {/* Mobile Account & Wishlist */}
               <div className="space-y-4 pt-4">
-                <div className="flex items-center gap-2">
-                  <Image src={Account || "/placeholder.svg"} alt="Account" width={24} height={24} className="w-6 h-6" />
-                  <button>Login / Register</button>
-                </div>
                 <Link href="/wishlist" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
                   <CiHeart />
                   <span>Wishlist</span>
@@ -363,4 +396,3 @@ const Navbar: React.FC = () => {
 }
 
 export default Navbar
-
