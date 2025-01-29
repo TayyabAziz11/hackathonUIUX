@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 
@@ -47,14 +45,16 @@ export default function CheckoutForm({ onPaymentSuccess, onClose }: CheckoutForm
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+
       <PaymentElement />
+
       <button
         disabled={isLoading || !stripe || !elements}
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded transition duration-300 disabled:opacity-50"
+        className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors disabled:opacity-50"
       >
         <span>{isLoading ? "Processing..." : "Pay now"}</span>
-
       </button>
+
       {message && <div className="text-center mt-4 text-sm font-medium text-red-600">{message}</div>}
 
       <button
